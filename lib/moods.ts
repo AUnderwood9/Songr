@@ -23,23 +23,19 @@ export const MOODS = [
 
 export type Mood = (typeof MOODS)[number];
 
+export interface MoodResult {
+  rank: number;
+  mood: Mood;
+  score: number;
+  reason: string;
+}
+
 export function buildMoodPrompt(songName: string, artist: string): string {
   const moodList = MOODS.join(", ");
 
-  return `You are a music mood analyst. Here is a list of feelings:
+  return `You are a music mood analyst. Analyze the song "${songName}" by ${artist}.
 
-${moodList}
+Pick exactly 5 moods from this list: ${moodList}
 
-Analyze the song "${songName}" by ${artist}.
-
-Return exactly 5 moods ranked by how strongly they match the song. Format your response as a markdown table with these columns:
-
-| Rank | Mood | Score /10 | Reason |
-|------|------|-----------|--------|
-
-Rules:
-- Pick moods ONLY from the list above
-- Score each mood from 1 to 10
-- Keep each reason to one sentence
-- Rank from strongest match to weakest`;
+Rank them by how strongly they match the song. Score each from 1 to 10. Consider lyrics, production, and vocal delivery. Keep each reason to one sentence.`;
 }

@@ -1,38 +1,12 @@
 "use client";
 
 import { useState } from "react";
-
-interface MoodRow {
-  rank: number;
-  mood: string;
-  score: string;
-  reason: string;
-}
-
-function parseMarkdownTable(raw: string): MoodRow[] {
-  const lines = raw.trim().split("\n");
-  // Skip header and separator lines
-  const dataLines = lines.filter(
-    (line) => line.startsWith("|") && !line.includes("---") && !line.includes("Rank")
-  );
-  return dataLines.map((line) => {
-    const cells = line
-      .split("|")
-      .map((c) => c.trim())
-      .filter(Boolean);
-    return {
-      rank: parseInt(cells[0], 10),
-      mood: cells[1],
-      score: cells[2],
-      reason: cells[3],
-    };
-  });
-}
+import type { MoodResult } from "@/lib/moods";
 
 export default function SongForm() {
   const [songName, setSongName] = useState("");
   const [artist, setArtist] = useState("");
-  const [results, setResults] = useState<MoodRow[] | null>(null);
+  const [results, setResults] = useState<MoodResult[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -55,7 +29,7 @@ export default function SongForm() {
       }
 
       const data = await res.json();
-      setResults(parseMarkdownTable(data.raw));
+      setResults(data.moods);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
@@ -129,7 +103,7 @@ export default function SongForm() {
                 <span className="font-semibold">
                   #{row.rank} {row.mood}
                 </span>
-                <span className="text-sm font-mono">{row.score}</span>
+                <span className="text-sm font-mono">{row.score}/10</span>
               </div>
               <p className="text-sm text-foreground/60">{row.reason}</p>
             </div>

@@ -26,7 +26,8 @@ Song Mood Analyzer — an MVP app that analyzes a song's emotional mood using Cl
 See `architecutre.md` for the full target architecture and `epic-evaluation-report.md` for the product roadmap. Key decisions:
 
 - **Deployment**: AWS serverless (Lambda + CloudFront + S3), standalone Next.js output mode
-- **AI**: Anthropic Claude API, called only from server-side API routes (`app/api/`), never from client
+- **AI**: Anthropic Claude API, called only from server-side API routes (`app/api/`), never from client. Uses **tool use** for structured outputs — the API defines a tool with a JSON schema and forces Claude to return data matching it (`tool_choice: { type: "tool" }`). Shared types (`MoodResult`) are defined in `lib/moods.ts` and used by both the API route and client components.
+- **Validation**: Custom lightweight schema validator (`lib/validate.ts`) for API route input. Define a schema object with type/required/min/max constraints, call `validate(input, schema)`, returns `{ success, data }` or `{ success, errors }`. Use this for all new API routes.
 - **Data**: DynamoDB for mood vocabulary; mood list is locked — AI cannot invent moods outside it
 - **PWA**: Offline support, installability, service worker
 - **SEO**: SSR for all indexable pages, `generateMetadata` for per-page meta, JSON-LD structured data
