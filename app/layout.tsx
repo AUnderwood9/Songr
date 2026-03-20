@@ -13,7 +13,10 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Song Mood Analyzer",
+  title: {
+    default: "Song Mood Analyzer",
+    template: "%s | Song Mood Analyzer",
+  },
   description: "Discover the mood of any song with AI-Powered results.",
 };
 
