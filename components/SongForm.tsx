@@ -38,47 +38,61 @@ export default function SongForm() {
   }
 
   return (
-    <div className="w-full max-w-2xl space-y-8">
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label htmlFor="songName" className="block text-sm font-medium mb-1">
-            Song Name
-          </label>
-          <input
-            id="songName"
-            type="text"
-            required
-            value={songName}
-            onChange={(e) => setSongName(e.target.value)}
-            placeholder="Bohemian Rhapsody"
-            className="w-full rounded-lg border border-foreground/20 bg-transparent px-4 py-2.5 text-sm outline-none focus:border-foreground/50 transition-colors"
-          />
+    <div className="w-full max-w-[620px] mx-auto space-y-6">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-inner-card rounded-[14px] border border-border p-5 space-y-3"
+      >
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div>
+            <label
+              htmlFor="songName"
+              className="block text-[9px] font-mono uppercase tracking-[0.08em] text-text-faint mb-1.5"
+            >
+              Song Name
+            </label>
+            <input
+              id="songName"
+              type="text"
+              required
+              value={songName}
+              onChange={(e) => setSongName(e.target.value)}
+              placeholder="enter song title..."
+              className="w-full bg-input border border-border rounded-[8px] px-3 py-[9px] text-[13px] text-text-primary placeholder:text-placeholder outline-none focus:border-accent transition-colors font-mono"
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="artist"
+              className="block text-[9px] font-mono uppercase tracking-[0.08em] text-text-faint mb-1.5"
+            >
+              Artist
+            </label>
+            <input
+              id="artist"
+              type="text"
+              required
+              value={artist}
+              onChange={(e) => setArtist(e.target.value)}
+              placeholder="enter artist name..."
+              className="w-full bg-input border border-border rounded-[8px] px-3 py-[9px] text-[13px] text-text-primary placeholder:text-placeholder outline-none focus:border-accent transition-colors font-mono"
+            />
+          </div>
         </div>
-        <div>
-          <label htmlFor="artist" className="block text-sm font-medium mb-1">
-            Artist
-          </label>
-          <input
-            id="artist"
-            type="text"
-            required
-            value={artist}
-            onChange={(e) => setArtist(e.target.value)}
-            placeholder="Queen"
-            className="w-full rounded-lg border border-foreground/20 bg-transparent px-4 py-2.5 text-sm outline-none focus:border-foreground/50 transition-colors"
-          />
+
+        <div className="flex justify-end pt-1">
+          <button
+            type="submit"
+            disabled={loading}
+            className="btn-gradient text-white text-[10px] uppercase tracking-[0.04em] font-medium rounded-[8px] px-6 py-2 hover:brightness-110 transition-all disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
+          >
+            {loading ? "Analyzing..." : "Analyze"}
+          </button>
         </div>
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full rounded-lg bg-foreground text-background py-2.5 text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
-        >
-          {loading ? "Analyzing..." : "Analyze Mood"}
-        </button>
       </form>
 
       {error && (
-        <p className="text-red-500 text-sm text-center">{error}</p>
+        <p className="text-red-500 text-[13px] text-center font-mono">{error}</p>
       )}
 
       {loading && (
@@ -86,7 +100,7 @@ export default function SongForm() {
           {[...Array(5)].map((_, i) => (
             <div
               key={i}
-              className="h-16 rounded-lg bg-foreground/5 animate-pulse"
+              className="h-16 rounded-[12px] bg-inner-card animate-pulse"
             />
           ))}
         </div>
@@ -97,15 +111,15 @@ export default function SongForm() {
           {results.map((row) => (
             <div
               key={row.rank}
-              className="rounded-lg border border-foreground/10 p-4"
+              className="rounded-[12px] border border-border bg-inner-card p-4"
             >
               <div className="flex items-center justify-between mb-1">
-                <span className="font-semibold">
+                <span className="font-mono font-medium text-text-primary">
                   #{row.rank} {row.mood}
                 </span>
-                <span className="text-sm font-mono">{row.score}/10</span>
+                <span className="text-[13px] font-mono text-accent">{row.score}/10</span>
               </div>
-              <p className="text-sm text-foreground/60">{row.reason}</p>
+              <p className="text-[13px] font-mono text-text-secondary">{row.reason}</p>
             </div>
           ))}
         </div>

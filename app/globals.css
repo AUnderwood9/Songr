@@ -1,26 +1,116 @@
 @import "tailwindcss";
 
+/* Dark mode (default) */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --page: #0E0C14;
+  --card: #181622;
+  --inner-card: #201E2E;
+  --input: #181622;
+  --border: rgba(169, 138, 232, 0.06);
+  --border-accent: rgba(169, 138, 232, 0.20);
+  --accent: #A98AE8;
+  --accent2: #7BA4F4;
+  --accent-soft: rgba(169, 138, 232, 0.10);
+  --text-primary: #EDE8F6;
+  --text-secondary: #A8A0BE;
+  --text-faint: #736B8A;
+  --placeholder: #736B8A;
+  --success: #5ECC8A;
+  --success-bg: rgba(94, 204, 138, 0.08);
+  --success-border: rgba(94, 204, 138, 0.20);
+}
+
+/* Light mode */
+html.light {
+  --page: #F0ECF4;
+  --card: #FAF8FC;
+  --inner-card: #EEEBF4;
+  --input: #FAF8FC;
+  --border: rgba(0, 0, 0, 0.06);
+  --border-accent: rgba(124, 92, 191, 0.25);
+  --accent: #7C5CBF;
+  --accent2: #5B8DEF;
+  --accent-soft: rgba(124, 92, 191, 0.08);
+  --text-primary: #1E1832;
+  --text-secondary: #5E5478;
+  --text-faint: #857CA0;
+  --placeholder: #857CA0;
+  --success: #34A864;
+  --success-bg: rgba(52, 168, 100, 0.08);
+  --success-border: rgba(52, 168, 100, 0.20);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-page: var(--page);
+  --color-card: var(--card);
+  --color-inner-card: var(--inner-card);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-border-accent: var(--border-accent);
+  --color-accent: var(--accent);
+  --color-accent2: var(--accent2);
+  --color-accent-soft: var(--accent-soft);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-faint: var(--text-faint);
+  --color-placeholder: var(--placeholder);
+  --color-success: var(--success);
+  --color-success-bg: var(--success-bg);
+  --color-success-border: var(--success-border);
+
+  --font-display: var(--font-playfair), Georgia, serif;
+  --font-mono: var(--font-ibm-plex-mono), monospace;
   --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+
+  --shadow-wrapper: 0 1px 3px rgba(0, 0, 0, 0.04), 0 8px 30px rgba(120, 100, 80, 0.07);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@utility btn-gradient {
+  background: linear-gradient(135deg, #6A48B0, #5570D0);
+
+  html.light & {
+    background: linear-gradient(135deg, #7C5CBF, #5B8DEF);
+  }
+}
+
+@utility wrapper-glow {
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle, rgba(169, 138, 232, 0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  html.light &::before {
+    background: radial-gradient(circle, rgba(124, 92, 191, 0.04) 0%, transparent 70%);
+  }
+}
+
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--page);
+  color: var(--text-primary);
+  font-family: var(--font-mono), monospace;
 }
