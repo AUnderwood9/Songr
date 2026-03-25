@@ -1,0 +1,22 @@
+[
+  { "name": "Joyful", "category": "positive", "active": true },
+  { "name": "Melancholic", "category": "reflective", "active": true },
+  { "name": "Anxious", "category": "tense", "active": true },
+  { "name": "Peaceful", "category": "positive", "active": true },
+  { "name": "Angry", "category": "tense", "active": true },
+  { "name": "Hopeful", "category": "positive", "active": true },
+  { "name": "Lonely", "category": "reflective", "active": true },
+  { "name": "Euphoric", "category": "positive", "active": true },
+  { "name": "Bittersweet", "category": "reflective", "active": true },
+  { "name": "Nostalgic", "category": "reflective", "active": true },
+  { "name": "Vulnerable", "category": "reflective", "active": true },
+  { "name": "Defiant", "category": "tense", "active": true },
+  { "name": "Tender", "category": "positive", "active": true },
+  { "name": "Restless", "category": "tense", "active": true },
+  { "name": "Empowered", "category": "positive", "active": true },
+  { "name": "Heartbroken", "category": "reflective", "active": true },
+  { "name": "Playful", "category": "positive", "active": true },
+  { "name": "Somber", "category": "reflective", "active": true },
+  { "name": "Yearning", "category": "reflective", "active": true },
+  { "name": "Free", "category": "positive", "active": true }
+]

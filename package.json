@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.78.0",
+    "@aws-sdk/client-dynamodb": "^3.1014.0",
+    "@aws-sdk/lib-dynamodb": "^3.1014.0",
     "next": "latest",
     "react": "latest",
     "react-dom": "latest"

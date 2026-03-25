@@ -30,8 +30,12 @@ export interface MoodResult {
   reason: string;
 }
 
-export function buildMoodPrompt(songName: string, artist: string): string {
-  const moodList = MOODS.join(", ");
+export function buildMoodPrompt(
+  songName: string,
+  artist: string,
+  moods?: string[]
+): string {
+  const moodList = (moods ?? [...MOODS]).join(", ");
 
   return `You are a music mood analyst. Analyze the song "${songName}" by ${artist}.
 

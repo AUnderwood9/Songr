@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { buildMoodPrompt } from "@/lib/moods";
 import { analyzeMood } from "@/lib/anthropic";
 import { validate } from "@/lib/validate";
+import { getActiveMoods } from "@/lib/dynamodb";
 
 const analyzeSchema = {
   songName: { type: "string" as const, min: 1, max: 200 },
@@ -21,8 +22,9 @@ export async function POST(request: NextRequest) {
 
   try {
     const { songName, artist } = result.data;
-    const prompt = buildMoodPrompt(songName, artist);
-    const moods = await analyzeMood(prompt);
+    const activeMoods = await getActiveMoods();
+    const prompt = buildMoodPrompt(songName, artist, activeMoods);
+    const moods = await analyzeMood(prompt, activeMoods);
     return NextResponse.json({ song: songName, artist, moods });
   } catch {
     return NextResponse.json(
