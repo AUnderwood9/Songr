@@ -6,7 +6,7 @@ import { getActiveMoods } from "@/lib/dynamodb";
 
 const analyzeSchema = {
   songName: { type: "string" as const, min: 1, max: 200 },
-  artist: { type: "string" as const, min: 1, max: 200 },
+  artist: { type: "string" as const, required: false as const, min: 1, max: 200 },
 };
 
 export async function POST(request: NextRequest) {
