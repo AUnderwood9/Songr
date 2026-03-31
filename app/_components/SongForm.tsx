@@ -20,7 +20,7 @@ export default function SongForm() {
       const res = await fetch("/api/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ songName, artist }),
+        body: JSON.stringify({ songName: songName.trim(), artist: artist.trim() }),
       });
 
       if (!res.ok) {
@@ -71,7 +71,6 @@ export default function SongForm() {
             <input
               id="artist"
               type="text"
-              required
               value={artist}
               onChange={(e) => setArtist(e.target.value)}
               placeholder="enter artist name..."
@@ -83,7 +82,7 @@ export default function SongForm() {
         <div className="flex justify-end pt-1">
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || !songName.trim()}
             className="btn-gradient text-white text-[10px] uppercase tracking-[0.04em] font-medium rounded-[8px] px-6 py-2 hover:brightness-110 transition-all disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
           >
             {loading ? "Analyzing..." : "Analyze"}

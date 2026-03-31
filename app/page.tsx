@@ -1,5 +1,5 @@
-import Header from "@/components/Header";
-import SongForm from "@/components/SongForm";
+import Header from "@/app/_components/Header";
+import SongForm from "@/app/_components/SongForm";
 
 export default function Home() {
   return (

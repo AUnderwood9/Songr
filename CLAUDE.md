@@ -12,14 +12,50 @@ Song Mood Analyzer — an MVP app that analyzes a song's emotional mood using Cl
 - `npm run build` — production build
 - `npm run lint` — run ESLint (flat config with next/core-web-vitals and next/typescript)
 - `npm start` — serve production build
+- `npm run test-ui` — run UI tests (Jest + React Testing Library)
 
 ## Architecture
 
 - **Next.js App Router** (`app/` directory): Uses the `app/` directory for routing, not `pages/`.
 - **Path alias**: `@/*` maps to the project root.
-- **Styling**: Tailwind CSS v4 via PostCSS. Dark mode supported via system preference.
-- **Fonts**: Geist and Geist Mono loaded via `next/font/google`.
+- **Styling**: Tailwind CSS v4 via PostCSS. Dark mode via `html.light` class toggle (dark default, no persistence).
+- **Fonts**: Playfair Display, IBM Plex Mono, Geist, Geist Mono loaded via `next/font/google`.
 - **TypeScript**: Strict mode enabled, target ES2017, bundler module resolution.
+
+## Folder Structure — Split by Feature
+
+Uses Next.js App Router **split-by-feature** organization (Strategy 3 from the [official docs](https://nextjs.org/docs/app/getting-started/project-structure)). Globally shared code lives at the project root; feature-specific code is colocated with its route using private folders (`_components/`, `_lib/`).
+
+```
+song-mood/
+├── app/
+│   ├── layout.tsx
+│   ├── page.tsx
+│   ├── globals.css
+│   ├── _components/        ← home page components (SongForm, Header)
+│   ├── _lib/               ← home page utilities (if needed)
+│   ├── api/
+│   │   └── analyze/
+│   │       └── route.ts
+│   ├── results/            ← future: results page
+│   │   ├── page.tsx
+│   │   ├── _components/    ← results-specific components
+│   │   └── _lib/           ← results-specific utilities
+│   └── recommendations/    ← future: recommendations page
+│       ├── page.tsx
+│       └── _components/
+├── components/             ← shared components used across multiple routes
+├── lib/                    ← shared utilities (moods.ts, validate.ts, anthropic.ts, dynamodb.ts)
+├── data/                   ← seed data, fixtures
+├── public/
+└── [config files]
+```
+
+**Rules:**
+- Route-specific components go in `_components/` inside that route's folder (private folder, excluded from routing)
+- Components used by 2+ routes get promoted to root `components/`
+- Shared server utilities (API clients, validation, types) stay in root `lib/`
+- When adding a new route, create `_components/` and `_lib/` as needed — don't default to root folders
 
 ## Target Architecture
 
