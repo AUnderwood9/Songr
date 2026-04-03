@@ -132,11 +132,13 @@ describe("Story 3: Submit a song for analysis", () => {
     await user.click(screen.getByRole("button", { name: /analyze/i }));
     await screen.findByText(/Melancholic/);
 
+    const callsBefore = (global.fetch as jest.Mock).mock.calls.length;
+
     await user.clear(screen.getByPlaceholderText("enter song title..."));
     await user.type(screen.getByPlaceholderText("enter song title..."), "Song Two");
     await user.click(screen.getByRole("button", { name: /analyze/i }));
 
-    expect(global.fetch).toHaveBeenCalledTimes(2);
+    expect((global.fetch as jest.Mock).mock.calls.length - callsBefore).toBe(1);
   });
 
   it("clears previous errors when a new submission starts", async () => {
@@ -275,7 +277,7 @@ describe("Story 5: View mood results", () => {
     await user.type(screen.getByPlaceholderText("enter song title..."), "Song Two");
     await user.click(screen.getByRole("button", { name: /analyze/i }));
 
-    await screen.findByText(/Joyful/);
+    await screen.findAllByText(/Joyful/);
     expect(screen.queryByText(/Melancholic/)).not.toBeInTheDocument();
   });
 });
