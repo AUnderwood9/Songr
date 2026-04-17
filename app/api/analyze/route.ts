@@ -24,8 +24,8 @@ export async function POST(request: NextRequest) {
     const { songName, artist } = result.data;
     const activeMoods = await getActiveMoods();
     const prompt = buildMoodPrompt(songName, artist, activeMoods);
-    const moods = await analyzeMood(prompt, activeMoods);
-    return NextResponse.json({ song: songName, artist, moods });
+    const analysis = await analyzeMood(prompt, activeMoods);
+    return NextResponse.json({ song: songName, artist, confidence: analysis.confidence, moods: analysis.moods });
   } catch {
     return NextResponse.json(
       { error: "Analysis failed. Please try again." },

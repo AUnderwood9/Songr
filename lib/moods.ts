@@ -30,16 +30,22 @@ export interface MoodResult {
   reason: string;
 }
 
+export interface AnalysisResult {
+  confidence: number;
+  moods: MoodResult[];
+}
+
 export function buildMoodPrompt(
   songName: string,
-  artist: string,
+  artist?: string,
   moods?: string[]
 ): string {
   const moodList = (moods ?? [...MOODS]).join(", ");
+  const songLabel = artist ? `"${songName}" by ${artist}` : `"${songName}"`;
 
-  return `You are a music mood analyst. Analyze the song "${songName}" by ${artist}.
+  return `Analyze the song ${songLabel}.
 
 Pick exactly 5 moods from this list: ${moodList}
 
-Rank them by how strongly they match the song. Score each from 1 to 10. Consider lyrics, production, and vocal delivery. Keep each reason to one sentence.`;
+Rank them 1-5 by how strongly they match the song. Score each from 1 to 10. Use the full range — there should be meaningful separation between ranks. Keep each reason to one sentence.`;
 }

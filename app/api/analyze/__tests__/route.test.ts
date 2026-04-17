@@ -124,7 +124,7 @@ describe("Story 10: Process analysis request end-to-end", () => {
 
   it("returns 200 with mood results for valid request", async () => {
     mockedGetActiveMoods.mockResolvedValueOnce(mockActiveMoods);
-    mockedAnalyzeMood.mockResolvedValueOnce(mockMoods);
+    mockedAnalyzeMood.mockResolvedValueOnce({ confidence: 95, moods: mockMoods });
 
     const response = await POST(makeRequest({ songName: "Yesterday", artist: "Beatles" }));
     const data = await response.json();
@@ -132,12 +132,13 @@ describe("Story 10: Process analysis request end-to-end", () => {
     expect(response.status).toBe(200);
     expect(data.song).toBe("Yesterday");
     expect(data.artist).toBe("Beatles");
+    expect(data.confidence).toBe(95);
     expect(data.moods).toEqual(mockMoods);
   });
 
   it("returns 200 when artist is omitted", async () => {
     mockedGetActiveMoods.mockResolvedValueOnce(mockActiveMoods);
-    mockedAnalyzeMood.mockResolvedValueOnce(mockMoods);
+    mockedAnalyzeMood.mockResolvedValueOnce({ confidence: 95, moods: mockMoods });
 
     const response = await POST(makeRequest({ songName: "Yesterday" }));
 

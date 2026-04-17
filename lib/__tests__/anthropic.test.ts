@@ -38,13 +38,33 @@ describe("Story 9: analyzeMood", () => {
           type: "tool_use",
           id: "tool_1",
           name: "return_mood_analysis",
-          input: { moods: mockMoods },
+          input: { confidence: 95, moods: mockMoods },
         },
       ],
     });
 
     const result = await analyzeMood("Analyze Yesterday", ["Melancholic", "Nostalgic", "Vulnerable", "Hopeful", "Bittersweet"]);
-    expect(result).toEqual(mockMoods);
+    expect(result).toEqual({ confidence: 95, moods: mockMoods });
+  });
+
+  it("sends a system prompt separate from the user message", async () => {
+    mockCreate.mockResolvedValueOnce({
+      content: [
+        {
+          type: "tool_use",
+          id: "tool_1",
+          name: "return_mood_analysis",
+          input: { confidence: 95, moods: mockMoods },
+        },
+      ],
+    });
+
+    await analyzeMood("Analyze Yesterday", ["Melancholic"]);
+    expect(mockCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        system: expect.stringContaining("music mood analyst"),
+      })
+    );
   });
 
   it("calls the API with temperature 0", async () => {
@@ -54,7 +74,7 @@ describe("Story 9: analyzeMood", () => {
           type: "tool_use",
           id: "tool_1",
           name: "return_mood_analysis",
-          input: { moods: mockMoods },
+          input: { confidence: 95, moods: mockMoods },
         },
       ],
     });
@@ -72,7 +92,7 @@ describe("Story 9: analyzeMood", () => {
           type: "tool_use",
           id: "tool_1",
           name: "return_mood_analysis",
-          input: { moods: mockMoods },
+          input: { confidence: 95, moods: mockMoods },
         },
       ],
     });
