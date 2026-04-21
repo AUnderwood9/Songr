@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { buildMoodPrompt } from "@/lib/moods";
+import { buildMoodPrompt } from "@/lib/prompts";
 import { analyzeMood } from "@/lib/anthropic";
 import { validate } from "@/lib/validate";
 import { getActiveMoods } from "@/lib/dynamodb";
@@ -20,9 +20,18 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  let activeMoods: string[];
+  try {
+    activeMoods = await getActiveMoods();
+  } catch {
+    return NextResponse.json(
+      { error: "Unable to load mood vocabulary. Please try again later." },
+      { status: 503 }
+    );
+  }
+
   try {
     const { songName, artist } = result.data;
-    const activeMoods = await getActiveMoods();
     const prompt = buildMoodPrompt(songName, artist, activeMoods);
     const analysis = await analyzeMood(prompt, activeMoods);
     return NextResponse.json({ song: songName, artist, confidence: analysis.confidence, moods: analysis.moods });

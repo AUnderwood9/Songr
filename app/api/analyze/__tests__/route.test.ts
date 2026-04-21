@@ -153,14 +153,14 @@ describe("Story 10: Process analysis request end-to-end", () => {
     expect(data.error).toBeDefined();
   });
 
-  it("returns 500 when DynamoDB fails", async () => {
+  it("returns 503 when DynamoDB fails", async () => {
     mockedGetActiveMoods.mockRejectedValueOnce(new Error("DynamoDB unavailable"));
 
     const response = await POST(makeRequest({ songName: "Yesterday" }));
 
-    expect(response.status).toBe(500);
+    expect(response.status).toBe(503);
     const data = await response.json();
-    expect(data.error).toBeDefined();
+    expect(data.error).toContain("mood vocabulary");
   });
 
   it("returns 500 when Anthropic fails", async () => {
@@ -174,8 +174,9 @@ describe("Story 10: Process analysis request end-to-end", () => {
     expect(data.error).toBeDefined();
   });
 
-  it("does not leak internal error details in 500 response", async () => {
-    mockedGetActiveMoods.mockRejectedValueOnce(new Error("Secret internal details"));
+  it("does not leak internal error details in error responses", async () => {
+    mockedGetActiveMoods.mockResolvedValueOnce(mockActiveMoods);
+    mockedAnalyzeMood.mockRejectedValueOnce(new Error("Secret internal details"));
 
     const response = await POST(makeRequest({ songName: "Yesterday" }));
     const data = await response.json();

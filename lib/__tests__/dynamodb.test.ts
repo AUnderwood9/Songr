@@ -62,6 +62,33 @@ describe("Story 8: getActiveMoods", () => {
     expect(mockSend).toHaveBeenCalledTimes(1);
   });
 
+  it("returns stale cache when DynamoDB throws", async () => {
+    mockSend
+      .mockResolvedValueOnce({
+        Items: [{ PK: "MOOD#Joyful", active: true }],
+      })
+      .mockRejectedValueOnce(new Error("Service unavailable"));
+
+    const now = Date.now();
+    jest.spyOn(Date, "now")
+      .mockReturnValueOnce(now)
+      .mockReturnValueOnce(now + 6 * 60 * 1000);
+
+    const first = await getActiveMoods();
+    const second = await getActiveMoods();
+
+    expect(first).toEqual(["Joyful"]);
+    expect(second).toEqual(["Joyful"]);
+  });
+
+  it("throws when DynamoDB fails and no cache exists", async () => {
+    mockSend.mockRejectedValueOnce(new Error("Service unavailable"));
+
+    await expect(getActiveMoods()).rejects.toThrow(
+      "Failed to load mood vocabulary from database"
+    );
+  });
+
   it("re-queries DynamoDB after cache expires", async () => {
     const now = Date.now();
     jest.spyOn(Date, "now")

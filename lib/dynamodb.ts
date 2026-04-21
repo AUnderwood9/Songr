@@ -16,20 +16,28 @@ export async function getActiveMoods(): Promise<string[]> {
     return cachedMoods;
   }
 
-  const result = await docClient.send(
-    new ScanCommand({
-      TableName: TABLE_NAME,
-      FilterExpression: "active = :active",
-      ExpressionAttributeValues: { ":active": true },
-      ProjectionExpression: "PK",
-    })
-  );
+  try {
+    const result = await docClient.send(
+      new ScanCommand({
+        TableName: TABLE_NAME,
+        FilterExpression: "active = :active",
+        ExpressionAttributeValues: { ":active": true },
+        ProjectionExpression: "PK",
+      })
+    );
 
-  const moods = (result.Items ?? [])
-    .map((item) => (item.PK as string).replace("MOOD#", ""))
-    .sort();
+    const moods = (result.Items ?? [])
+      .map((item) => (item.PK as string).replace("MOOD#", ""))
+      .sort();
 
-  cachedMoods = moods;
-  cacheTimestamp = now;
-  return moods;
+    cachedMoods = moods;
+    cacheTimestamp = now;
+    return moods;
+  } catch (error) {
+    if (cachedMoods) {
+      console.warn("DynamoDB unavailable, returning stale cache", error);
+      return cachedMoods;
+    }
+    throw new Error("Failed to load mood vocabulary from database");
+  }
 }
