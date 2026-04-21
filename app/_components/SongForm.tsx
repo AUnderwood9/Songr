@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import type { MoodResult } from "@/lib/moods";
+import type { MoodResult } from "@/lib/prompts";
 
 export default function SongForm() {
   const [songName, setSongName] = useState("");
