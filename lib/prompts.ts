@@ -1,5 +1,5 @@
-const promptBodyTemplate = (songName: string, moodList: string) => {
-  return `Analyze the song ${songName}.
+const promptBodyTemplate = (songSummary: string, moodList: string) => {
+  return `Analyze the song ${songSummary}.
     Follow these steps:
     1. Recall what you know about this song — its lyrics, melody, production, tempo, and genre context.
     2. Assess your confidence (0-100) in knowing this specific song. If unsure, base your analysis on what the title, artist, and genre suggest.
@@ -27,8 +27,7 @@ export function buildMoodPrompt(
   moods: string[] = []
 ): string {
   const moodList = moods.join(", ");
-  const songLabel = artist ? `"${songName}" by ${artist}` : `"${songName}"`;
+  const songSummary = artist ? `"${songName}" by ${artist}` : `"${songName}"`;
 
-  return promptBodyTemplate(songLabel, moodList)
-
+  return promptBodyTemplate(songSummary, moodList);
 }
