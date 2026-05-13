@@ -1,14 +1,22 @@
 "use client";
 
-import { useState } from "react";
-import type { MoodResult } from "@/lib/prompts";
+import { useEffect, useRef, useState } from "react";
+import type { AnalysisResult } from "@/lib/prompts";
+import MoodCard from "./MoodCard";
 
 export default function SongForm() {
+  const songNameRef = useRef<HTMLInputElement>(null);
+  const artistRef = useRef<HTMLInputElement>(null);
   const [songName, setSongName] = useState("");
   const [artist, setArtist] = useState("");
-  const [results, setResults] = useState<MoodResult[] | null>(null);
+  const [results, setResults] = useState<AnalysisResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (songNameRef.current?.value) setSongName(songNameRef.current.value);
+    if (artistRef.current?.value) setArtist(artistRef.current.value);
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -29,7 +37,7 @@ export default function SongForm() {
       }
 
       const data = await res.json();
-      setResults(data.moods);
+      setResults({ confidence: data.confidence, moods: data.moods });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
@@ -52,6 +60,7 @@ export default function SongForm() {
               Song Name
             </label>
             <input
+              ref={songNameRef}
               id="songName"
               type="text"
               required
@@ -69,6 +78,7 @@ export default function SongForm() {
               Artist
             </label>
             <input
+              ref={artistRef}
               id="artist"
               type="text"
               value={artist}
@@ -107,19 +117,30 @@ export default function SongForm() {
 
       {results && (
         <div className="space-y-3">
-          {results.map((row) => (
-            <div
-              key={row.rank}
-              className="rounded-[12px] border border-border bg-inner-card p-4"
-            >
-              <div className="flex items-center justify-between mb-1">
-                <span className="font-mono font-medium text-text-primary">
-                  #{row.rank} {row.mood}
-                </span>
-                <span className="text-[13px] font-mono text-accent">{row.score}/10</span>
-              </div>
-              <p className="text-[13px] font-mono text-text-secondary">{row.reason}</p>
+          <div className="rounded-[12px] border border-border bg-inner-card p-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-[10px] font-mono uppercase tracking-wide text-text-faint">
+                Confidence
+              </span>
+              <span className="text-[13px] font-mono text-accent">
+                {results.confidence}%
+              </span>
             </div>
+            <div className="h-1.5 rounded-full bg-page overflow-hidden">
+              <div
+                className="h-full rounded-full bg-accent score-bar-fill"
+                style={{ width: `${results.confidence}%` }}
+              />
+            </div>
+            {results.confidence < 50 && (
+              <p className="text-[11px] font-mono text-text-faint mt-2">
+                Low confidence — results may be less accurate for unfamiliar songs.
+              </p>
+            )}
+          </div>
+
+          {results.moods.map((row) => (
+            <MoodCard key={row.rank} mood={row} />
           ))}
         </div>
       )}
