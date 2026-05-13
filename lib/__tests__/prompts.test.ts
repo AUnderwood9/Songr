@@ -41,6 +41,13 @@ describe("Story 9: buildMoodPrompt", () => {
     const prompt = buildMoodPrompt("Yesterday", "Beatles", testMoods);
     expect(prompt).toContain("Follow these steps:");
     expect(prompt).toMatch(/1\./);
-    expect(prompt).toMatch(/6\./);
+    expect(prompt).toMatch(/7\./);
+  });
+
+  it("contains evidence gathering step", () => {
+    const prompt = buildMoodPrompt("Yesterday", "Beatles", testMoods);
+    expect(prompt).toMatch(/7\./);
+    expect(prompt).toMatch(/lyric/i);
+    expect(prompt).toMatch(/criteria/i);
   });
 });

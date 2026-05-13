@@ -83,11 +83,16 @@ describe("Story 7: Server rejects invalid input", () => {
 // Story 10: Process analysis request end-to-end
 
 const mockMoods = [
-  { rank: 1, mood: "Melancholic", score: 9, reason: "Heavy minor keys." },
-  { rank: 2, mood: "Nostalgic", score: 8, reason: "Past memories." },
-  { rank: 3, mood: "Vulnerable", score: 7, reason: "Raw vocals." },
-  { rank: 4, mood: "Hopeful", score: 5, reason: "Lift in chorus." },
-  { rank: 5, mood: "Bittersweet", score: 4, reason: "Mixed emotions." },
+  { rank: 1, mood: "Melancholic", score: 9, reason: "Heavy minor keys.",
+    evidence: { lyrics: ["All my troubles seemed so far away"], criteria: ["lyrics", "production"] } },
+  { rank: 2, mood: "Nostalgic", score: 8, reason: "Past memories.",
+    evidence: { lyrics: ["Yesterday, love was such an easy game"], criteria: ["lyrics", "vocal delivery"] } },
+  { rank: 3, mood: "Vulnerable", score: 7, reason: "Raw vocals.",
+    evidence: { lyrics: [], criteria: ["vocal delivery", "production"] } },
+  { rank: 4, mood: "Hopeful", score: 5, reason: "Lift in chorus.",
+    evidence: { lyrics: [], criteria: ["production", "tempo"] } },
+  { rank: 5, mood: "Bittersweet", score: 4, reason: "Mixed emotions.",
+    evidence: { lyrics: ["There's a shadow hanging over me"], criteria: ["lyrics", "emotional arc"] } },
 ];
 
 const mockActiveMoods = ["Bittersweet", "Hopeful", "Melancholic", "Nostalgic", "Vulnerable"];
@@ -172,6 +177,45 @@ describe("Story 10: Process analysis request end-to-end", () => {
     expect(response.status).toBe(500);
     const data = await response.json();
     expect(data.error).toBeDefined();
+  });
+
+  it("response includes evidence per mood", async () => {
+    mockedGetActiveMoods.mockResolvedValueOnce(mockActiveMoods);
+    mockedAnalyzeMood.mockResolvedValueOnce({ confidence: 95, moods: mockMoods });
+
+    const response = await POST(makeRequest({ songName: "Yesterday", artist: "Beatles" }));
+    const data = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(data.moods[0].evidence).toBeDefined();
+    expect(data.moods[0].evidence.criteria).toEqual(expect.arrayContaining(["lyrics"]));
+    expect(data.moods[0].evidence.lyrics).toHaveLength(1);
+  });
+
+  it("returns 200 when moods have empty lyrics", async () => {
+    const moodsEmptyLyrics = mockMoods.map(m => ({
+      ...m, evidence: { lyrics: [], criteria: m.evidence.criteria }
+    }));
+    mockedGetActiveMoods.mockResolvedValueOnce(mockActiveMoods);
+    mockedAnalyzeMood.mockResolvedValueOnce({ confidence: 80, moods: moodsEmptyLyrics });
+
+    const response = await POST(makeRequest({ songName: "Yesterday", artist: "Beatles" }));
+
+    expect(response.status).toBe(200);
+    const data = await response.json();
+    expect(data.moods[0].evidence.lyrics).toEqual([]);
+  });
+
+  it("returns 200 when evidence is missing from response", async () => {
+    const moodsNoEvidence = mockMoods.map(({ evidence, ...rest }) => rest);
+    mockedGetActiveMoods.mockResolvedValueOnce(mockActiveMoods);
+    mockedAnalyzeMood.mockResolvedValueOnce({ confidence: 30, moods: moodsNoEvidence });
+
+    const response = await POST(makeRequest({ songName: "Yesterday", artist: "Beatles" }));
+
+    expect(response.status).toBe(200);
+    const data = await response.json();
+    expect(data.moods[0].evidence).toBeUndefined();
   });
 
   it("does not leak internal error details in error responses", async () => {

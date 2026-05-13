@@ -6,7 +6,13 @@ const promptBodyTemplate = (songSummary: string, moodList: string) => {
     3. Consider the full emotional arc — verses, chorus, bridge, and overall feel — not just the most obvious moment.
     4. Select exactly 5 moods from this list that best capture the song: ${moodList}
     5. Rank them 1-5 by match strength. Score each from 1 to 10 — use the full range with meaningful separation between ranks.
-    6. Write a one-sentence reason for each mood explaining why it fits.`;
+    6. Write a one-sentence reason for each mood explaining why it fits.
+    7. For each mood, cite 1-3 specific lyric lines as evidence and identify which criteria contributed most: lyrics, production, tempo, vocal delivery, or emotional arc.`;
+}
+
+export interface MoodEvidence {
+  lyrics: string[];
+  criteria: string[];
 }
 
 export interface MoodResult {
@@ -14,6 +20,7 @@ export interface MoodResult {
   mood: string;
   score: number;
   reason: string;
+  evidence?: MoodEvidence;
 }
 
 export interface AnalysisResult {
