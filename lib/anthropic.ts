@@ -8,7 +8,7 @@ const CLIENT = new Anthropic({
 const SYSTEM_PROMPT = `You are a music mood analyst with deep knowledge of songs across all genres and eras.
 You provide authoritative, definitive analysis based on lyrics, production, tempo, vocal delivery, and overall emotional arc.`;
 const SYSTEM_MODEL = "claude-sonnet-4-6";
-const MAX_TOKENS = 512
+const MAX_TOKENS = 1536
 const MODEL_TEMP = 0
 const MESSAGE_TYPE = "user"
 const TOOL_TYPE = "tool"
@@ -27,10 +27,23 @@ export async function analyzeMood(prompt: string, activeMoods: string[]): Promis
     tool_choice: { type: TOOL_TYPE, name: ModelToolName.MOOD_ANALYSIS },
   });
 
+  console.log("Anthropic response:", JSON.stringify({
+    stop_reason: response.stop_reason,
+    usage: response.usage,
+    content_types: response.content.map((b) => b.type),
+  }));
+
   const toolBlock = response.content.find((block) => block.type === TOOL_BLOCK_TYPE);
   if (!toolBlock || toolBlock.type !== TOOL_BLOCK_TYPE) {
     throw new Error("No structured response from Anthropic API");
   }
 
-  return toolBlock.input as AnalysisResult;
+  const result = toolBlock.input as AnalysisResult;
+  console.log("Parsed result:", JSON.stringify({
+    confidence: result.confidence,
+    moods_count: result.moods?.length,
+    has_moods: !!result.moods,
+  }));
+
+  return result;
 }
